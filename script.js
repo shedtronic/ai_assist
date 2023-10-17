@@ -2,8 +2,8 @@ let recognition;
 let recognizedText = '';
 
 function setup() {
-  createCanvas(400, 100);
-  canvas.position(10, 50);
+  let cnv = createCanvas(400, 100);
+  cnv.position(10, 50); // Position the canvas within its parent container
   background(220);
   textSize(16);
   textAlign(CENTER, CENTER);
