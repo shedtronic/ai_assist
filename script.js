@@ -2,7 +2,7 @@ let recognition;
 let recognizedText = '';
 
 function setup() {
-  let cnv = createCanvas(400, 100);
+  let cnv = createCanvas(1024, 768);
   cnv.position(10, 50); // Position the canvas within its parent container
   background(220);
   textSize(16);
