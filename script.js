@@ -1,34 +1,112 @@
-let recognition;
-let recognizedText = '';
+body {
+  font-family: Arial, sans-serif;
+}
 
-function setup() {
-  let cnv = createCanvas(1024, 768);
-  cnv.position(10, 50); // Position the canvas within its parent container
-  background(220);
-  textSize(36); // Set the font size to 36px
-  textFont('Helvetica, Arial, sans-serif'); // Set the font to a headline font
+#output {
+  background-color: #f0f0f0;
+  padding: 20px;
+  margin: 10px;
+  border: 1px solid #ccc;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  right: 20px;
+  bottom: 20px;
+  font-size: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 2s;
+}
 
-  if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-    recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-    recognition.continuous = true;
-    recognition.interimResults = true;
+.text-fade {
+  animation: fade 5s forwards;
+}
 
-    recognition.onresult = function (event) {
-      recognizedText = '';
-      for (let i = 0; i < event.results.length; i++) {
-        recognizedText += event.results[i][0].transcript + ' '; // Add a space to separate recognized words
-      }
-    };
-
-    recognition.start();
-  } else {
-    console.log('Speech recognition is not supported in this browser.');
+@keyframes fade {
+  from {
+      opacity: 1;
+  }
+  to {
+      opacity: 0;
   }
 }
 
-function draw() {
-  background(220);
-  fill(0);
-  textLeading(40); // Increase line height to ensure text wraps
-  text(recognizedText, 100, 100, 300, 300); // Provide 100px padding within the canvas
+button {
+  margin: 10px;
+  padding: 10px;
+  font-size: 16px;
+}
+JavaScript (script.js):
+
+javascript
+Copy code
+let recognition;
+let recognizedWords = [];
+
+function setup() {
+let outputDiv = document.getElementById('output');
+outputDiv.style.display = 'none';
+
+const startButton = document.getElementById('startButton');
+const stopButton = document.getElementById('stopButton');
+
+startButton.addEventListener('click', startListening);
+stopButton.addEventListener('click', stopListening);
+
+if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+  recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+  recognition.continuous = true;
+  recognition.interimResults = true;
+
+  recognition.onresult = function (event) {
+    recognizedWords = [];
+    for (let i = 0; i < event.results.length; i++) {
+      recognizedWords.push(event.results[i][0].transcript);
+    }
+    displayWords();
+  };
+} else {
+  console.log('Speech recognition is not supported in this browser.');
+}
+}
+
+function displayWords() {
+let outputDiv = document.getElementById('output');
+outputDiv.style.display = 'block';
+outputDiv.textContent = '';
+
+// Randomly position each word within the canvas
+let canvasWidth = window.innerWidth - 40; // Account for 20px padding
+let canvasHeight = window.innerHeight - 40; // Account for 20px padding
+
+recognizedWords.forEach((word) => {
+  let wordElement = document.createElement('span');
+  wordElement.textContent = word;
+  wordElement.style.position = 'absolute';
+  wordElement.style.left = `${Math.floor(Math.random() * canvasWidth)}px`;
+  wordElement.style.top = `${Math.floor(Math.random() * canvasHeight)}px`;
+  wordElement.classList.add('text-fade');
+  outputDiv.appendChild(wordElement);
+});
+
+// Clear words after 5 seconds
+setTimeout(() => {
+  recognizedWords = [];
+  outputDiv.style.display = 'none';
+  outputDiv.textContent = '';
+}, 5000);
+}
+
+function startListening() {
+if (recognition) {
+  recognition.start();
+}
+}
+
+function stopListening() {
+if (recognition) {
+  recognition.stop();
+}
 }
