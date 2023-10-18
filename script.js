@@ -33,12 +33,12 @@ function displayWord(word) {
   const wordElement = document.createElement('span');
   wordElement.textContent = word;
 
-  // Randomly position the word within the canvas
-  const canvasWidth = outputDiv.offsetWidth;
-  const canvasHeight = outputDiv.offsetHeight;
+  // Randomly position the word within the viewport
+  const viewportWidth = window.innerWidth;
+  const viewportHeight = window.innerHeight;
   wordElement.style.position = 'absolute';
-  wordElement.style.left = `${Math.floor(Math.random() * canvasWidth)}px`;
-  wordElement.style.top = `${Math.floor(Math.random() * canvasHeight)}px`;
+  wordElement.style.left = `${Math.floor(Math.random() * viewportWidth)}px`;
+  wordElement.style.top = `${Math.floor(Math.random() * viewportHeight)}px`;
   wordElement.classList.add('text-fade');
   outputDiv.appendChild(wordElement);
 
