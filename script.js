@@ -1,47 +1,4 @@
-body {
-  font-family: Arial, sans-serif;
-}
 
-#output {
-  background-color: #f0f0f0;
-  padding: 20px;
-  margin: 10px;
-  border: 1px solid #ccc;
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  right: 20px;
-  bottom: 20px;
-  font-size: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: opacity 2s;
-}
-
-.text-fade {
-  animation: fade 5s forwards;
-}
-
-@keyframes fade {
-  from {
-      opacity: 1;
-  }
-  to {
-      opacity: 0;
-  }
-}
-
-button {
-  margin: 10px;
-  padding: 10px;
-  font-size: 16px;
-}
-JavaScript (script.js):
-
-javascript
-Copy code
 let recognition;
 let recognizedWords = [];
 
