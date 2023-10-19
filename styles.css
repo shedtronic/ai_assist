@@ -1,6 +1,5 @@
 body {
     font-family: Arial, sans-serif;
-    overflow: hidden; /* Hide scrollbars */
 }
 
 #output {
@@ -12,7 +11,6 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
 }
 
 .text-fade {
