@@ -31,12 +31,17 @@ function displayWord(word) {
   const wordElement = document.createElement('span');
   wordElement.textContent = word;
 
-  // Randomly position the word within the viewport
-  const viewportWidth = window.innerWidth;
-  const viewportHeight = window.innerHeight;
+  // Get the dimensions of the output div
+  const outputWidth = outputDiv.offsetWidth;
+  const outputHeight = outputDiv.offsetHeight;
+
+  // Calculate a random position within the bounds of the output div
+  const leftPosition = Math.floor(Math.random() * (outputWidth - wordElement.clientWidth));
+  const topPosition = Math.floor(Math.random() * (outputHeight - wordElement.clientHeight));
+
   wordElement.style.position = 'absolute';
-  wordElement.style.left = `${Math.floor(Math.random() * viewportWidth)}px`;
-  wordElement.style.top = `${Math.floor(Math.random() * viewportHeight)}px`;
+  wordElement.style.left = `${leftPosition}px`;
+  wordElement.style.top = `${topPosition}px`;
   wordElement.classList.add('text-fade');
 
   outputDiv.appendChild(wordElement);
