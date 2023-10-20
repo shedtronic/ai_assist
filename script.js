@@ -2,14 +2,12 @@ let recognition;
 let recognizedWords = [];
 
 function setup() {
+  // This function will be empty for p5.js to work correctly
+}
+
+function initializeRecognition() {
   const outputDiv = document.getElementById('output');
   outputDiv.style.position = 'relative';
-
-  const startButton = document.getElementById('startButton');
-  const stopButton = document.getElementById('stopButton');
-
-  startButton.addEventListener('click', startListening);
-  stopButton.addEventListener('click', stopListening);
 
   if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
     recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
@@ -40,6 +38,7 @@ function displayWord(word) {
   wordElement.style.left = `${Math.floor(Math.random() * viewportWidth)}px`;
   wordElement.style.top = `${Math.floor(Math.random() * viewportHeight)}px`;
   wordElement.classList.add('text-fade');
+
   outputDiv.appendChild(wordElement);
 
   // Clear the word after 5 seconds
@@ -60,3 +59,11 @@ function stopListening() {
     recognition.stop();
   }
 }
+
+// Add event listeners for the buttons
+document.getElementById('startButton').addEventListener('click', () => {
+  initializeRecognition();
+  startListening();
+});
+
+document.getElementById('stopButton').addEventListener('click', stopListening);
