@@ -1,33 +1,34 @@
 let recognition;
 let recognizedWords = [];
+let displayedWords = [];
+let lastDisplayTime = 0; // To track the last time a sentence was displayed
 
 function setup() {
-  // This function will be empty for p5.js to work correctly
+  // Setup the p5.js canvas and buttons here
 }
 
 function initializeRecognition() {
-  const outputDiv = document.getElementById('output');
-  outputDiv.style.position = 'relative';
-
-  if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-    recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-    recognition.continuous = true;
-    recognition.interimResults = true;
-
-    recognition.onresult = function (event) {
-      for (let i = 0; i < event.results.length; i++) {
-        const word = event.results[i][0].transcript;
-        recognizedWords.push(word);
-        displayWord(word);
-      }
-    };
-  } else {
-    console.log('Speech recognition is not supported in this browser.');
-  }
+  // Initialize recognition here
 }
 
 function displayWord(word) {
   const outputDiv = document.getElementById('output');
+
+  // Check if the word has already been displayed and skip if it's a repeat
+  if (displayedWords.includes(word)) {
+    return;
+  }
+
+  displayedWords.push(word);
+
+  // Remove the word from the displayedWords array after 5 seconds
+  setTimeout(() => {
+    const index = displayedWords.indexOf(word);
+    if (index !== -1) {
+      displayedWords.splice(index, 1);
+    }
+  }, 5000);
+
   const wordElement = document.createElement('span');
   wordElement.textContent = word;
 
@@ -48,7 +49,6 @@ function displayWord(word) {
 
   // Clear the word after 5 seconds
   setTimeout(() => {
-    recognizedWords.shift();
     outputDiv.removeChild(wordElement);
   }, 5000);
 }
@@ -65,10 +65,16 @@ function stopListening() {
   }
 }
 
-// Add event listeners for the buttons
+// Event listener for the "Start Listening" button
 document.getElementById('startButton').addEventListener('click', () => {
-  initializeRecognition();
+  // Initialize recognition only if it hasn't been initialized in the last minute
+  const currentTime = Date.now();
+  if (currentTime - lastDisplayTime > 60000) {
+    initializeRecognition();
+  }
+
   startListening();
 });
 
+// Event listener for the "Stop Listening" button
 document.getElementById('stopButton').addEventListener('click', stopListening);
