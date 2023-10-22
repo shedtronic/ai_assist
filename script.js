@@ -5,11 +5,28 @@ const wordBuffer = 10; // Number of words to display in the buffer
 let lastDisplayTime = 0; // To track the last time a sentence was displayed
 
 function setup() {
-  // Setup the p5.js canvas and buttons here
+  // This function will be empty for p5.js to work correctly
 }
 
 function initializeRecognition() {
-  // Initialize recognition here
+  const outputDiv = document.getElementById('output');
+  outputDiv.style.position = 'relative';
+
+  if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+    recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+
+    recognition.onresult = function (event) {
+      for (let i = 0; i < event.results.length; i++) {
+        const word = event.results[i][0].transcript;
+        recognizedWords.push(word);
+        displayWord(word);
+      }
+    };
+  } else {
+    console.log('Speech recognition is not supported in this browser.');
+  }
 }
 
 function displayWord(word) {
@@ -84,7 +101,7 @@ function stopListening() {
   }
 }
 
-// Event listener for the "Start Listening" button
+// Add event listeners for the buttons
 document.getElementById('startButton').addEventListener('click', () => {
   // Initialize recognition only if it hasn't been initialized in the last minute
   const currentTime = Date.now();
@@ -95,5 +112,9 @@ document.getElementById('startButton').addEventListener('click', () => {
   startListening();
 });
 
-// Event listener for the "Stop Listening" button
-document.getElementById('stopButton').addEventListener('click', stopListening);
+document.getElementById('stopButton').addEventListener('click', () => {
+  stopListening();
+});
+
+// Call initializeRecognition to set up recognition when the page loads
+initializeRecognition();
