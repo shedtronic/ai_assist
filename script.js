@@ -108,7 +108,7 @@ document.getElementById('startButton').addEventListener('click', () => {
   if (currentTime - lastDisplayTime > 60000) {
     initializeRecognition();
   }
-
+//Start and Stop Listening Functions
   startListening();
 });
 
