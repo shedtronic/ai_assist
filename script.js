@@ -6,6 +6,9 @@ let lastDisplayTime = 0; // To track the last time a sentence was displayed
 
 function setup() {
   // This function will be empty for p5.js to work correctly
+  createCanvas(400, 100);
+  textSize(10); // Set the font size
+  textAlign(RIGHT, TOP); // Align text to the top-right corner
 }
 
 function initializeRecognition() {
@@ -94,6 +97,12 @@ function stopListening() {
   if (recognition) {
     recognition.stop();
   }
+}
+
+function draw() {
+  background(220);
+  fill(0);
+  text(`Max Words to Display: ${maxWordsToDisplay}`, width - 10, 10); // Display maxWordsToDisplay in top-right corner
 }
 
 document.getElementById('startButton').addEventListener('click', () => {
