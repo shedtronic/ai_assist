@@ -1,6 +1,8 @@
 let recognition;
 let recognizedWords = [];
 const wordBuffer = 10; // Number of words to display in the buffer
+let displayedWords = [];
+let lastDisplayTime = 0; // To track the last time a sentence was displayed
 
 function setup() {
   // This function will be empty for p5.js to work correctly
@@ -30,6 +32,27 @@ function initializeRecognition() {
 function displayWord(word) {
   const outputDiv = document.getElementById('output');
 
+  // Check if the word has already been displayed and skip if it's a repeat
+  if (displayedWords.includes(word)) {
+    return;
+  }
+
+  // Add the word to the displayed words buffer
+  displayedWords.push(word);
+
+  // Remove earlier words from the buffer if it exceeds the wordBuffer size
+  if (displayedWords.length > wordBuffer) {
+    const removedWords = displayedWords.splice(0, displayedWords.length - wordBuffer);
+    for (const removedWord of removedWords) {
+      removeWord(removedWord);
+    }
+  }
+
+  // Remove the word from the displayedWords array after 5 seconds
+  setTimeout(() => {
+    removeWord(word);
+  }, 5000);
+
   const wordElement = document.createElement('span');
   wordElement.textContent = word;
 
@@ -50,13 +73,20 @@ function displayWord(word) {
 
   // Clear the word after 5 seconds
   setTimeout(() => {
-    removeWord(wordElement);
+    removeWord(word);
   }, 5000);
 }
 
-function removeWord(wordElement) {
+function removeWord(word) {
   const outputDiv = document.getElementById('output');
-  outputDiv.removeChild(wordElement);
+  const wordElement = outputDiv.querySelector(`span:contains('${word}')`);
+  if (wordElement) {
+    outputDiv.removeChild(wordElement);
+    const index = displayedWords.indexOf(word);
+    if (index !== -1) {
+      displayedWords.splice(index, 1);
+    }
+  }
 }
 
 function startListening() {
@@ -73,7 +103,14 @@ function stopListening() {
 
 // Add event listeners for the buttons
 document.getElementById('startButton').addEventListener('click', () => {
-  initializeRecognition();
+  // Initialize recognition only if it hasn't been initialized in the last minute
+  const currentTime = Date.now();
+  if (currentTime - lastDisplayTime > 60000) {
+    displayedWords = [];
+    removeDisplayedWords(); // Remove any words currently displayed
+    initializeRecognition();
+  }
+
   startListening();
 });
 
