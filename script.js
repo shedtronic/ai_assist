@@ -1,8 +1,6 @@
 let recognition;
 let recognizedWords = [];
-let displayedWords = [];
 const wordBuffer = 10; // Number of words to display in the buffer
-let lastDisplayTime = 0; // To track the last time a sentence was displayed
 
 function setup() {
   // This function will be empty for p5.js to work correctly
@@ -32,27 +30,6 @@ function initializeRecognition() {
 function displayWord(word) {
   const outputDiv = document.getElementById('output');
 
-  // Check if the word has already been displayed and skip if it's a repeat
-  if (displayedWords.includes(word)) {
-    return;
-  }
-
-  // Add the word to the displayed words buffer
-  displayedWords.push(word);
-
-  // Remove earlier words from the buffer if it exceeds the wordBuffer size
-  if (displayedWords.length > wordBuffer) {
-    const removedWords = displayedWords.splice(0, displayedWords.length - wordBuffer);
-    for (const removedWord of removedWords) {
-      removeWord(removedWord);
-    }
-  }
-
-  // Remove the word from the displayedWords array after 5 seconds
-  setTimeout(() => {
-    removeWord(word);
-  }, 5000);
-
   const wordElement = document.createElement('span');
   wordElement.textContent = word;
 
@@ -73,20 +50,13 @@ function displayWord(word) {
 
   // Clear the word after 5 seconds
   setTimeout(() => {
-    removeWord(word);
+    removeWord(wordElement);
   }, 5000);
 }
 
-function removeWord(word) {
+function removeWord(wordElement) {
   const outputDiv = document.getElementById('output');
-  const wordElement = outputDiv.querySelector(`span:contains('${word}')`);
-  if (wordElement) {
-    outputDiv.removeChild(wordElement);
-    const index = displayedWords.indexOf(word);
-    if (index !== -1) {
-      displayedWords.splice(index, 1);
-    }
-  }
+  outputDiv.removeChild(wordElement);
 }
 
 function startListening() {
@@ -103,12 +73,7 @@ function stopListening() {
 
 // Add event listeners for the buttons
 document.getElementById('startButton').addEventListener('click', () => {
-  // Initialize recognition only if it hasn't been initialized in the last minute
-  const currentTime = Date.now();
-  if (currentTime - lastDisplayTime > 60000) {
-    initializeRecognition();
-  }
-//Start and Stop Listening Functions
+  initializeRecognition();
   startListening();
 });
 
