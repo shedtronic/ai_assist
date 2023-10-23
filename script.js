@@ -4,12 +4,17 @@ const maxWordsToDisplay = 100; // Maximum number of words to display
 let displayedWords = [];
 let lastDisplayTime = 0; // To track the last time a sentence was displayed
 
+
 function setup() {
-  // This function will be empty for p5.js to work correctly
-  createCanvas(400, 100);
+  createCanvas(400, 100).parent('canvas-container'); // Create the canvas inside the container
   textSize(10); // Set the font size
   textAlign(RIGHT, TOP); // Align text to the top-right corner
+  initializeRecognition(); // Initialize voice recognition
 }
+
+
+
+
 
 function initializeRecognition() {
   const outputDiv = document.getElementById('output');
