@@ -89,6 +89,17 @@ function removeWord(word) {
   }
 }
 
+function removeDisplayedWords() {
+  const outputDiv = document.getElementById('output');
+  for (const word of displayedWords) {
+    const wordElement = outputDiv.querySelector(`span:contains('${word}')`);
+    if (wordElement) {
+      outputDiv.removeChild(wordElement);
+    }
+  }
+  displayedWords = [];
+}
+
 function startListening() {
   if (recognition) {
     recognition.start();
@@ -99,6 +110,7 @@ function stopListening() {
   if (recognition) {
     recognition.stop();
   }
+  removeDisplayedWords(); // Remove any words currently displayed
 }
 
 // Add event listeners for the buttons
