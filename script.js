@@ -1,6 +1,6 @@
 let recognition;
 let recognizedWords = [];
-const wordBuffer = 10; // Number of words to display in the buffer
+const wordBuffer = 100; // Number of words to display in the buffer
 let displayedWords = [];
 let lastDisplayTime = 0; // To track the last time a sentence was displayed
 
