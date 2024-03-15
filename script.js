@@ -1,12 +1,13 @@
 window.addEventListener('load', () => {
   let recognition;
   let recognizedWords = [];
-  const maxWordsToDisplay = 100; // Maximum number of words to display
+  const maxWordsToDisplay = 10; // Maximum number of words to display
   let displayedWords = [];
   let lastDisplayTime = 0; // To track the last time a sentence was displayed
 
+ 
   function setup() {
-    createCanvas(400, 100).parent('canvas-container'); // Create the canvas inside the container
+    const canvas = createCanvas(400, 100).parent('canvas-container'); // Create the canvas inside the container
     textSize(10); // Set the font size
     textAlign(RIGHT, TOP); // Align text to the top-right corner
     initializeRecognition(); // Initialize voice recognition
@@ -35,57 +36,89 @@ window.addEventListener('load', () => {
 
   function displayWord(word) {
     const outputDiv = document.getElementById('output');
-
+  
     // Check if the word has already been displayed and skip if it's a repeat
     if (displayedWords.includes(word)) {
       return;
     }
-
+  
     displayedWords.push(word);
-
-    // Remove earlier words if the buffer exceeds the maximum number of words to display
+  
+    // Limit the displayed words to the maximum buffer size
     if (displayedWords.length > maxWordsToDisplay) {
-      const removedWords = displayedWords.splice(0, displayedWords.length - maxWordsToDisplay);
-      for (const removedWord of removedWords) {
-        removeWord(removedWord);
-      }
+      const removedWord = displayedWords.shift(); // Remove the oldest word from the buffer
+      fadeOutWord(removedWord, 2000); // Adjust the fade-out duration as needed (in milliseconds)
     }
-
+  
     setTimeout(() => {
       removeWord(word);
-    }, 5000);
+    }, 1000); // Adjust the timeout for word display duration as needed (in milliseconds)
+  
+    const canvas = document.getElementById('defaultCanvas0');
+    
+    if (canvas) {
+      const canvasRect = canvas.getBoundingClientRect();
+    
+      const leftPosition = Math.floor(Math.random() * (canvasRect.width));
+      const topPosition = Math.floor(Math.random() * (canvasRect.height));
+    
+      fill(0);
+      text(word, leftPosition, topPosition); // Draw text on the canvas
+    
+      setTimeout(() => {
+        fadeOutWord(word, 2000); // Adjust the fade-out duration as needed (in milliseconds)
+      }, 1000); // Adjust the timeout for word display duration as needed (in milliseconds)
+    } else {
+      console.log('Canvas element not found');
+    }
+  }
+  
 
-    const wordElement = document.createElement('span');
-    wordElement.textContent = word;
 
-    const outputWidth = outputDiv.offsetWidth;
-    const outputHeight = outputDiv.offsetHeight;
+  function fadeOutWord(word, duration) {
+    const outputDiv = document.getElementById('output');
+    const words = outputDiv.querySelectorAll('span.text-fade');
 
-    const leftPosition = Math.floor(Math.random() * (outputWidth - wordElement.clientWidth));
-    const topPosition = Math.floor(Math.random() * (outputHeight - wordElement.clientHeight));
+    words.forEach((wordElement) => {
+      if (wordElement.textContent === word) {
+        let opacity = 100; // initial opacity value
+        wordElement.style.opacity = `${opacity}%`; // Set initial opacity before starting the interval
 
-    wordElement.style.position = 'absolute';
-    wordElement.style.left = `${leftPosition}px`;
-    wordElement.style.top = `${topPosition}px`;
-    wordElement.classList.add('text-fade');
-
-    outputDiv.appendChild(wordElement);
-
-    setTimeout(() => {
-      removeWord(word);
-    }, 5000);
+        const fadeInterval = setInterval(() => {
+          if (opacity <= 0) {
+            clearInterval(fadeInterval);
+            removeWord(word);
+          } else {
+            wordElement.style.opacity = `${opacity}%`;
+            opacity -= (2 / (duration / 100)); // decrease opacity gradually based on the specified duration
+          }
+        }, 100);
+      }
+    });
   }
 
   function removeWord(word) {
     const outputDiv = document.getElementById('output');
-    const wordElement = outputDiv.querySelector(`span:contains('${word}')`);
-    if (wordElement) {
-      outputDiv.removeChild(wordElement);
-      const index = displayedWords.indexOf(word);
-      if (index !== -1) {
-        displayedWords.splice(index, 1);
+    const words = outputDiv.querySelectorAll('span.text-fade');
+
+    words.forEach((wordElement) => {
+      if (wordElement.textContent === word) {
+        outputDiv.removeChild(wordElement);
+        const index = displayedWords.indexOf(word);
+        if (index !== -1) {
+          displayedWords.splice(index, 1);
+        }
       }
-    }
+    });
+  }
+
+  function removeDisplayedWords() {
+    const outputDiv = document.getElementById('output');
+    const words = outputDiv.querySelectorAll('span.text-fade');
+
+    words.forEach((wordElement) => {
+      fadeOutWord(wordElement.textContent);
+    });
   }
 
   function startListening() {
@@ -100,10 +133,19 @@ window.addEventListener('load', () => {
     }
   }
 
+
+
+
+
+  
+ 
+
+
   function draw() {
     background(220);
     fill(0);
-    text(`Max Words to Display: ${maxWordsToDisplay}`, width - 10, 10); // Display maxWordsToDisplay in top-right corner
+    text(`Max Words to Display: ${maxWordsToDisplay}`, width - 10, 10); // Display maxWordsToDisplay in the top-right corner
+    print(maxWordsToDisplay);
   }
 
   document.getElementById('startButton').addEventListener('click', () => {

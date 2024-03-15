@@ -32,3 +32,9 @@ button {
     padding: 10px;
     font-size: 16px;
 }
+
+
+.text-fade {
+    transition: opacity 1s ease-in-out;
+  }
+  
